@@ -63,7 +63,7 @@ fn check_op(
                 && check_op(
                     target,
                     remaining,
-                    accumulated_sum * 10_u64.pow(current.to_string().len() as u32) as u64 + current,
+                    accumulated_sum * 10_u64.pow(current.ilog10() + 1) as u64 + current,
                     allow_concatenation,
                 ))
         }
