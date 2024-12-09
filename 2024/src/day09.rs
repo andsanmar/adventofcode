@@ -135,7 +135,6 @@ fn compress2(
     while current_file_id > 0 {
         if let Some((file_size, file_current_position)) = file_metadata.get(&current_file_id) {
             let mut target_empty_position = None;
-            let mut selected_empty_space = None;
 
             // Search for suitable empty space that comes before current file
             'find_empty_space: for empty_space_index in 0..empty_spaces.len() {
@@ -145,23 +144,18 @@ fn compress2(
                 if empty_space_position < *file_current_position && empty_space_size >= *file_size {
                     target_empty_position = Some(empty_space_position);
 
-                    // If empty space is larger than needed, track it for splitting
+                    // If we split a larger empty space, leave the remainder in the same position
                     if empty_space_size != *file_size {
-                        selected_empty_space = Some((empty_space_position, empty_space_size));
+                        let remaining_space = (
+                            empty_space_position + file_size,
+                            empty_space_size - file_size,
+                        );
+                        empty_spaces[empty_space_index] = remaining_space;
+                    } else {
+                        empty_spaces.remove(empty_space_index);
                     }
-                    empty_spaces.remove(empty_space_index);
                     break 'find_empty_space;
                 }
-            }
-
-            // If we split a larger empty space, add the remainder back to tracking
-            if let Some((space_start_position, space_total_size)) = selected_empty_space {
-                let remaining_space = (
-                    space_start_position + file_size,
-                    space_total_size - file_size,
-                );
-                empty_spaces.push(remaining_space);
-                empty_spaces.sort();
             }
 
             // Move file to new position if suitable empty space was found
@@ -204,6 +198,7 @@ fn star2(
     }: Data,
 ) {
     compress2(&mut disk, &mut sizes, &mut empty_spaces);
+    // We can calculate the checksum only with the sizes data structure, but this exercise is left to the reader
     println!(
         "Star2: {}",
         disk.iter()
