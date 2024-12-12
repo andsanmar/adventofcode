@@ -82,10 +82,10 @@ fn calculate_antinodes2(antenna_coords: Vec<Coord>, grid_bounds: Coord) -> HashS
 
             // Extend vector in positive direction
             let mut multiplier: isize = 1;
-            while (antenna_coords[i].0 + multiplier * delta_x >= 0
+            while antenna_coords[i].0 + multiplier * delta_x >= 0
                 && antenna_coords[i].0 + multiplier * delta_x < grid_bounds.0
                 && antenna_coords[i].1 + multiplier * delta_y >= 0
-                && antenna_coords[i].1 + multiplier * delta_y < grid_bounds.1)
+                && antenna_coords[i].1 + multiplier * delta_y < grid_bounds.1
             {
                 antinode_positions.insert((
                     antenna_coords[i].0 + multiplier * delta_x,
@@ -96,10 +96,10 @@ fn calculate_antinodes2(antenna_coords: Vec<Coord>, grid_bounds: Coord) -> HashS
 
             // Extend vector in negative direction
             multiplier = 1;
-            while (antenna_coords[j].0 - multiplier * delta_x >= 0
+            while antenna_coords[j].0 - multiplier * delta_x >= 0
                 && antenna_coords[j].0 - multiplier * delta_x < grid_bounds.0
                 && antenna_coords[j].1 - multiplier * delta_y >= 0
-                && antenna_coords[j].1 - multiplier * delta_y < grid_bounds.1)
+                && antenna_coords[j].1 - multiplier * delta_y < grid_bounds.1
             {
                 antinode_positions.insert((
                     antenna_coords[j].0 - multiplier * delta_x,
