@@ -25,8 +25,8 @@ impl std::str::FromStr for Data {
     }
 }
 
-const SIZE_GRID: isize = 6;
-const FALLEN: usize = 12;
+const SIZE_GRID: isize = 70;
+const FALLEN: usize = 1024;
 
 fn stars(Data { fallen }: Data) {
     let mut to_check = HashSet::new();
@@ -58,6 +58,46 @@ fn stars(Data { fallen }: Data) {
     }
 
     println!("Star1: {:?}", iteration);
+
+    let mut blocked: HashSet<Coord> = HashSet::new();
+    for i in 0.. {
+        blocked.insert(fallen[i]);
+        let mut visited = HashSet::new();
+        visited.insert(fallen[i]);
+
+        // first element is bottom_left, second element is top_right
+        let mut bounds = [false; 2]; // Tracks if we've hit each boundary
+        let mut deque = vec![fallen[i]];
+        while let Some((x, y)) = deque.pop() {
+            // Check if we've hit any boundaries
+            bounds[0] |= x == 0 || y == SIZE_GRID;
+            bounds[1] |= x == SIZE_GRID || y == 0;
+
+            // If we hit boundaries at two ends, we found a path
+            if bounds[0] && bounds[1] {
+                println!("Star2: {},{}", fallen[i].0, fallen[i].1);
+                return;
+            }
+
+            // Check adjacent coordinates
+            for (dx, dy) in [
+                (0, 1),
+                (1, 0),
+                (0, -1),
+                (-1, 0),
+                (1, 1),
+                (1, -1),
+                (-1, 1),
+                (-1, -1),
+            ] {
+                let next = (x + dx, y + dy);
+                if blocked.contains(&next) && !visited.contains(&next) {
+                    deque.push(next);
+                    visited.insert(next);
+                }
+            }
+        }
+    }
 }
 
 fn main() -> Result<(), std::io::Error> {
